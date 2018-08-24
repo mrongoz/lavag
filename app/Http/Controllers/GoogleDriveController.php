@@ -50,14 +50,14 @@ class GoogleDriveController extends Controller
         $dir = $contents->where('type', 'dir')
             ->where('filename', $folder)
             ->first(); // There could be duplicate directory names!
-        if (!$dir) {
+        if (! $dir) {
             return 'No such folder!';
         }
         // Get the files inside the folder...
         $files = collect(Storage::disk('google')->listContents($dir['path'], false))
             ->where('type', 'file');
         return $files->mapWithKeys(function ($file) {
-            $filename = $file['filename'] . '.' . $file['extension'];
+            $filename = $file['filename'].'.'.$file['extension'];
             $path = $file['path'];
             // Use the path to download each file via a generated link..
             // Storage::disk('google')->get($file['path']);
@@ -138,11 +138,11 @@ class GoogleDriveController extends Controller
         $dir = $contents->where('type', 'dir')
             ->where('filename', 'Test Dir')
             ->first(); // There could be duplicate directory names!
-        if (!$dir) {
+        if (! $dir) {
             return 'Directory does not exist!';
         }
         // Create sub dir
-        Storage::disk('google')->makeDirectory($dir['path'] . '/Sub Dir');
+        Storage::disk('google')->makeDirectory($dir['path'].'/Sub Dir');
         return 'Sub Directory was created in Google Drive';
     }
 
@@ -154,10 +154,10 @@ class GoogleDriveController extends Controller
         $dir = $contents->where('type', 'dir')
             ->where('filename', 'Test Dir')
             ->first(); // There could be duplicate directory names!
-        if (!$dir) {
+        if (! $dir) {
             return 'Directory does not exist!';
         }
-        Storage::disk('google')->put($dir['path'] . '/test.txt', 'Hello World');
+        Storage::disk('google')->put($dir['path'].'/test.txt', 'Hello World');
         return 'File was created in the sub directory in Google Drive';
     }
 
