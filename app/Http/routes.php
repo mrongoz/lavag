@@ -47,4 +47,5 @@ Route::group(['prefix' => 'google-drive'], function () {
     Route::get('share', 'GoogleDriveController@share');
 
     Route::get('export/{basename}', 'GoogleDriveController@export');
+
 });

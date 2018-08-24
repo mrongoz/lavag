@@ -264,5 +264,4 @@ class GoogleDriveController extends Controller
         $export = $service->files->export($basename, $mimeType);
         return response($export->getBody(), 200, $export->getHeaders());
     }
-
 }
