@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
 use File;
-use Google_Service_Drive_Permission;
 use Storage;
+use Carbon\Carbon;
+use Google_Service_Drive_Permission;
 
 class GoogleDriveController extends Controller
 {
@@ -17,6 +17,7 @@ class GoogleDriveController extends Controller
     public function put()
     {
         Storage::disk('google')->put('test.txt', 'Hello World');
+
         return 'File was saved to Google Drive';
     }
 
@@ -26,6 +27,7 @@ class GoogleDriveController extends Controller
         $filePath = public_path($filename);
         $fileData = File::get($filePath);
         Storage::disk('google')->put($filename, $fileData);
+
         return 'File was saved to Google Drive';
     }
 
@@ -56,6 +58,7 @@ class GoogleDriveController extends Controller
         // Get the files inside the folder...
         $files = collect(Storage::disk('google')->listContents($dir['path'], false))
             ->where('type', 'file');
+
         return $files->mapWithKeys(function ($file) {
             $filename = $file['filename'].'.'.$file['extension'];
             $path = $file['path'];
@@ -78,6 +81,7 @@ class GoogleDriveController extends Controller
             ->first(); // there can be duplicate file names!
         //return $file; // array with file info
         $rawData = Storage::disk('google')->get($file['path']);
+
         return response($rawData, 200)
             ->header('ContentType', $file['mimetype'])
             ->header('Content-Disposition', "attachment; filename='$filename'");
@@ -113,6 +117,7 @@ class GoogleDriveController extends Controller
         //file_put_contents($targetFile, stream_get_contents($readStream), FILE_APPEND);
         // Stream the file to the browser...
         $readStream = Storage::disk('google')->getDriver()->readStream($file['path']);
+
         return response()->stream(function () use ($readStream) {
             fpassthru($readStream);
         }, 200, [
@@ -124,6 +129,7 @@ class GoogleDriveController extends Controller
     public function createDir()
     {
         Storage::disk('google')->makeDirectory('Test Dir');
+
         return 'Directory was created in Google Drive';
     }
 
@@ -143,6 +149,7 @@ class GoogleDriveController extends Controller
         }
         // Create sub dir
         Storage::disk('google')->makeDirectory($dir['path'].'/Sub Dir');
+
         return 'Sub Directory was created in Google Drive';
     }
 
@@ -158,6 +165,7 @@ class GoogleDriveController extends Controller
             return 'Directory does not exist!';
         }
         Storage::disk('google')->put($dir['path'].'/test.txt', 'Hello World');
+
         return 'File was created in the sub directory in Google Drive';
     }
 
@@ -173,6 +181,7 @@ class GoogleDriveController extends Controller
             ->where('extension', pathinfo($filename, PATHINFO_EXTENSION))
             ->sortBy('timestamp')
             ->last();
+
         return Storage::disk('google')->get($file['path']);
     }
 
@@ -191,6 +200,7 @@ class GoogleDriveController extends Controller
             ->where('extension', pathinfo($filename, PATHINFO_EXTENSION))
             ->first(); // there can be duplicate file names!
         Storage::disk('google')->delete($file['path']);
+
         return 'File was deleted from Google Drive';
     }
 
@@ -208,6 +218,7 @@ class GoogleDriveController extends Controller
             ->where('filename', $directoryName)
             ->first(); // there can be duplicate file names!
         Storage::disk('google')->deleteDirectory($directory['path']);
+
         return 'Directory was deleted from Google Drive';
     }
 
@@ -225,6 +236,7 @@ class GoogleDriveController extends Controller
             ->where('filename', $directoryName)
             ->first(); // there can be duplicate file names!
         Storage::disk('google')->move($directory['path'], 'new-test');
+
         return 'Directory was renamed in Google Drive';
     }
 
@@ -254,6 +266,7 @@ class GoogleDriveController extends Controller
         $permission->setType('anyone');
         $permission->setAllowFileDiscovery(false);
         $permissions = $service->permissions->create($file['basename'], $permission);
+
         return Storage::disk('google')->url($file['path']);
     }
 
@@ -262,6 +275,7 @@ class GoogleDriveController extends Controller
         $service = Storage::disk('google')->getAdapter()->getService();
         $mimeType = 'application/pdf';
         $export = $service->files->export($basename, $mimeType);
+
         return response($export->getBody(), 200, $export->getHeaders());
     }
 }
