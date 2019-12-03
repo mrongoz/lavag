@@ -2,11 +2,11 @@
 
 namespace App\Providers;
 
-use Storage;
 use Google_Client;
 use Google_Service_Drive;
-use League\Flysystem\Filesystem;
 use Illuminate\Support\ServiceProvider;
+use League\Flysystem\Filesystem;
+use Storage;
 
 class GoogleDriveServiceProvider extends ServiceProvider
 {
